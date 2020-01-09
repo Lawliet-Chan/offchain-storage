@@ -144,7 +144,10 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
+	// check user's operation access
 	fn check_op_access(user: T::AccountId, data: UserData<T::AccountId>, op: Access) -> bool {
+		/// User must have a higher access level than the data has.
+		/// Or the user is author itself.
 		access_value(data.access) >= access_value(op) || user == data.author
 	}
 
@@ -205,22 +208,36 @@ mod tests {
 		type Storage = HttpDB;
 	}
 
+	use sp_runtime::offchain::http::Request;
+
 	// Simulate a external database.
 	pub struct HttpDB;
 
 	impl ExternalStorage for HttpDB {
 		fn get(key: Vec<u8>) -> Vec<u8> {
-			unimplemented!()
+			let req: Request = Request::get("http://localhost:1234");
+			let pending = req.send().unwrap();
+			let mut response = pending.wait().unwrap();
+			let body = response.body();
+			body.collect::<Vec<u8>>()
 		}
 
 		fn set(key: Vec<u8>, value: Vec<u8>) {
-			unimplemented!()
+			let req: Request = Request::post("http://localhost:1234");
+			let pending = req.send().unwrap();
+			let mut response = pending.wait().unwrap();
 		}
 
 		fn delete(key: Vec<u8>) {
-			unimplemented!()
+			let req: Request = Request::delete("http://localhost:1234");
+			let pending = req.send().unwrap();
 		}
 	}
 
 	type OffchainStorage = Module<Test>;
+
+	#[test]
+	fn do_external_storage() {
+
+	}
 }
