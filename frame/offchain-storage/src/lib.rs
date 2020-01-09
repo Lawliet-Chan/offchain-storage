@@ -21,7 +21,7 @@ pub trait Trait: frame_system::Trait {
 }
 
 /// Access is that the access of UserData.
-#[derive(Encode, Decode, Copy, Clone, Default, PartialEq)]
+#[derive(Encode, Decode, Copy, Clone, PartialEq)]
 pub enum Access {
 	// Avoid means that no one can read or write this data unless author.
 	Avoid,
