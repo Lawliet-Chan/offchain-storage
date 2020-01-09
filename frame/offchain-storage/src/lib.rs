@@ -1,4 +1,4 @@
-use codec::{Decode, Encode, EncodeLike};
+use codec::{Decode, Encode};
 use frame_support::{
 	decl_error, decl_event, decl_module, decl_storage, dispatch::DispatchResult
 };
@@ -21,7 +21,7 @@ pub trait Trait: frame_system::Trait {
 }
 
 /// Access is that the access of UserData.
-#[derive(Encode, Decode, EncodeLike, Copy, Clone, PartialEq)]
+#[derive(Encode, Decode, Copy, Clone, PartialEq)]
 pub enum Access {
 	// Avoid means that no one can read or write this data unless author.
 	Avoid,
@@ -46,7 +46,7 @@ fn access_value(ac: Access) -> u8 {
 	}
 }
 
-#[derive(Encode, Decode, EncodeLike, Copy, Clone, Default, PartialEq)]
+#[derive(Encode, Decode, Copy, Clone, Default, PartialEq)]
 pub struct UserData<AccountId> {
 	// the author means this data was created by this person.
 	// author has the Write access.
@@ -115,7 +115,7 @@ decl_module! {
                 if !Self::check_op_access(user, data, Access::Read){
                     Err(Error::<T>::PermissionDenied)?
                 }else{
-                    let data = Self::set_external_storage(data_id, write_data);
+                    Self::set_external_storage(data_id, write_data);
                     <Data<T>>::insert(data_id, data);
                     Ok(())
                 }
