@@ -149,15 +149,15 @@ impl<T: Trait> Module<T> {
 	}
 
 	fn get_external_storage(data_id: Vec<u8>) -> Vec<u8> {
-		<T::Storage as ExternalStorage>::get(data_id)
+		<ExternalStorage>::get(T::Storage,data_id)
 	}
 
 	fn set_external_storage(data_id: Vec<u8>, data: Vec<u8>) {
-		<T::Storage as ExternalStorage>::set(data_id, data)
+		<ExternalStorage>::set(T::Storage,data_id, data)
 	}
 
 	fn delete_external_storage(data_id: Vec<u8>) {
-		<T::Storage as ExternalStorage>::delete(data_id)
+		<ExternalStorage>::delete(T::Storage,data_id)
 	}
 }
 
@@ -202,7 +202,7 @@ mod tests {
 	}
 	impl Trait for Test {
 		type Event = ();
-		type Storage = ();
+		type Storage = HttpDB;
 	}
 
 	// Simulate a external database.
