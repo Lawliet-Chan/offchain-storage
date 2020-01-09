@@ -3,7 +3,7 @@ use frame_support::{
 	decl_error, decl_event, decl_module, decl_storage, dispatch::DispatchResult
 };
 use frame_system::{self as system, ensure_signed};
-use sp_std::vec::Vec;
+use sp_std::{vec::Vec, default::Default};
 
 // ExternalStorage is for developers to implement specific storage
 // such as ipfs, mysql, mongodb, neo4j and so on.
@@ -29,6 +29,12 @@ pub enum Access {
 	Read,
 	// Write means that every one can read and write this data.
 	Write,
+}
+
+impl Default for Access {
+	fn default() -> Self{
+		Access::Read
+	}
 }
 
 // for the convenience of comparing access.
