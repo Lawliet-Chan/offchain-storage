@@ -20,7 +20,7 @@ pub trait Trait: frame_system::Trait {
 	type Storage: ExternalStorage;
 }
 
-#[derive(Encode, Decode, Copy, Clone, Default, PartialEq)]
+#[derive(Encode, Decode, Clone, Default, PartialEq)]
 pub struct UserData<AccountId> {
 	// the author means this data was created by this person.
 	// author has the Write access.
@@ -30,7 +30,7 @@ pub struct UserData<AccountId> {
 }
 
 /// Access is that the access of UserData.
-#[derive(Encode, Decode, Copy, Clone, PartialEq)]
+#[derive(Encode, Decode, Clone, PartialEq)]
 pub enum Access {
 	// Avoid means that no one can read or write this data unless author.
 	Avoid,
@@ -112,7 +112,7 @@ decl_module! {
             let user = ensure_signed(origin)?;
             if <Data<T>>::exists(&data_id) {
                 let data = Self::get_data(&data_id);
-                if !Self::check_op_access(user, data, Access::Read){
+                if !Self::check_op_access(user, data.clone(), Access::Read){
                     Err(Error::<T>::PermissionDenied)?
                 }else{
                     Self::set_external_storage(data_id.clone(), write_data);
