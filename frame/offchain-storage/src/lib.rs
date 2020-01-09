@@ -8,9 +8,9 @@ use sp_std::{vec::Vec, default::Default};
 // ExternalStorage is for developers to implement specific storage
 // such as ipfs, mysql, mongodb, neo4j and so on.
 pub trait ExternalStorage {
-	fn get(key: Vec<u8>) -> Vec<u8>;
-	fn set(key: Vec<u8>, value: Vec<u8>);
-	fn delete(key: Vec<u8>);
+	fn get(&self, key: Vec<u8>) -> Vec<u8>;
+	fn set(&self, key: Vec<u8>, value: Vec<u8>);
+	fn delete(&self, key: Vec<u8>);
 }
 
 pub trait Trait: frame_system::Trait {
@@ -162,4 +162,67 @@ impl<T: Trait> Module<T> {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+	use super::*;
+
+	use frame_support::{impl_outer_origin, assert_ok, parameter_types, weights::Weight};
+
+	impl_outer_origin! {
+		pub enum Origin for Test {}
+	}
+
+	// For testing the module, we construct most of a mock runtime. This means
+	// first constructing a configuration type (`Test`) which `impl`s each of the
+	// configuration traits of modules we want to use.
+	#[derive(Clone, Eq, PartialEq)]
+	pub struct Test;
+	parameter_types! {
+		pub const BlockHashCount: u64 = 250;
+		pub const MaximumBlockWeight: Weight = 1024;
+		pub const MaximumBlockLength: u32 = 2 * 1024;
+		pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
+	}
+	impl system::Trait for Test {
+		type Origin = Origin;
+		type Call = ();
+		type Index = u64;
+		type BlockNumber = u64;
+		type Hash = H256;
+		type Hashing = BlakeTwo256;
+		type AccountId = u64;
+		type Lookup = IdentityLookup<Self::AccountId>;
+		type Header = Header;
+		type Event = ();
+		type BlockHashCount = BlockHashCount;
+		type MaximumBlockWeight = MaximumBlockWeight;
+		type MaximumBlockLength = MaximumBlockLength;
+		type AvailableBlockRatio = AvailableBlockRatio;
+		type Version = ();
+		type ModuleToIndex = ();
+	}
+	impl Trait for Test {
+		type Event = ();
+		type Storage = ();
+	}
+
+	// Simulate a external database.
+	pub struct HttpDB{
+		db_url: &'static str,
+	}
+
+	impl ExternalStorage for HttpDB {
+		fn get(&self, key: Vec<u8>) -> Vec<u8> {
+			unimplemented!()
+		}
+
+		fn set(&self,key: Vec<u8>, value: Vec<u8>) {
+			unimplemented!()
+		}
+
+		fn delete(&self,key: Vec<u8>) {
+			unimplemented!()
+		}
+	}
+
+	type OffchainStorage = Module<Test>;
+}
