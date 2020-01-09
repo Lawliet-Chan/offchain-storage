@@ -21,7 +21,7 @@ pub trait Trait: frame_system::Trait {
 }
 
 /// Access is that the access of UserData.
-#[derive(Encode, Decode, Copy, Clone)]
+#[derive(Encode, Decode, Copy, Clone, Default, PartialEq)]
 pub enum Access {
 	// Avoid means that no one can read or write this data unless author.
 	Avoid,
@@ -40,7 +40,7 @@ fn access_value(ac: Access) -> u8 {
 	}
 }
 
-#[derive(Encode, Decode, Copy, Clone)]
+#[derive(Encode, Decode, Copy, Clone, Default, PartialEq)]
 pub struct UserData<AccountId> {
 	// the author means this data was created by this person.
 	// author has the Write access.
