@@ -94,7 +94,7 @@ decl_module! {
         fn read_data(origin, data_id: Vec<u8>) -> DispatchResult{
             let user = ensure_signed(origin)?;
             if <Data<T>>::exists(data_id){
-                let data = Self::get_data(data_id);
+                let data: UserData<T::AccountId> = Self::get_data(data_id);
                 if !Self::check_op_access(user, data, Access::Read){
                     Err(Error::<T>::PermissionDenied)?
                 }else{
@@ -111,7 +111,7 @@ decl_module! {
         fn write_data(origin, data_id: Vec<u8>, write_data: Vec<u8>) -> DispatchResult{
             let user = ensure_signed(origin)?;
             if <Data<T>>::exists(data_id) {
-                let data = Self::get_data(data_id);
+                let data: UserData<T::AccountId> = Self::get_data(data_id);
                 if !Self::check_op_access(user, data, Access::Read){
                     Err(Error::<T>::PermissionDenied)?
                 }else{
@@ -127,7 +127,7 @@ decl_module! {
         fn delete_data(origin, data_id: Vec<u8>) -> DispatchResult{
             let user = ensure_signed(origin)?;
             if <Data<T>>::exists(data_id){
-                let data = Self::get_data(data_id);
+                let data: UserData<T::AccountId> = Self::get_data(data_id);
                 if !Self::check_op_access(user, data, Access::Read){
                     Err(Error::<T>::PermissionDenied)?
                 }else{
