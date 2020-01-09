@@ -149,15 +149,16 @@ impl<T: Trait> Module<T> {
 	}
 
 	fn get_external_storage(data_id: Vec<u8>) -> Vec<u8> {
-		<ExternalStorage>::get(T::Storage,data_id)
+		<T as Trait>::Storage::get(data_id)
+		//<ExternalStorage>::get(<T as Trait>::Storage,data_id)
 	}
 
 	fn set_external_storage(data_id: Vec<u8>, data: Vec<u8>) {
-		<ExternalStorage>::set(T::Storage,data_id, data)
+		<ExternalStorage>::set(<T as Trait>::Storage,data_id, data)
 	}
 
 	fn delete_external_storage(data_id: Vec<u8>) {
-		<ExternalStorage>::delete(T::Storage,data_id)
+		<ExternalStorage>::delete(<T as Trait>::Storage,data_id)
 	}
 }
 
