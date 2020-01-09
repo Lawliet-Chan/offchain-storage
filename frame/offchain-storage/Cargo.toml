@@ -1,0 +1,22 @@
+[package]
+name = "offchain-storage"
+version = "0.1.0"
+authors = ["CrocdileChan <CrocdileChan@github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+frame-support = { version = "2.0.0", default-features = false, path = "../support" }
+frame-system = { version = "2.0.0", default-features = false, path = "../system" }
+codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false }
+sp-std ={ version = "2.0.0", default-features = false, path = "../../primitives/std" }
+
+[features]
+default = ["std"]
+std = [
+    "codec/std",
+    "frame-system/std",
+    "frame-support/std",
+    "sp-std/std"
+]
