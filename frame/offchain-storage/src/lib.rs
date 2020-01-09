@@ -1,4 +1,4 @@
-use codec::{Decode, Encode};
+use codec::{Decode, Encode, EncodeLike};
 use frame_support::{
 	decl_error, decl_event, decl_module, decl_storage, dispatch::DispatchResult
 };
@@ -21,7 +21,7 @@ pub trait Trait: frame_system::Trait {
 }
 
 /// Access is that the access of UserData.
-#[derive(Encode, Decode, Copy, Clone, PartialEq)]
+#[derive(Encode, Decode, EncodeLike, Copy, Clone, PartialEq)]
 pub enum Access {
 	// Avoid means that no one can read or write this data unless author.
 	Avoid,
@@ -46,7 +46,7 @@ fn access_value(ac: Access) -> u8 {
 	}
 }
 
-#[derive(Encode, Decode, Copy, Clone, Default, PartialEq)]
+#[derive(Encode, Decode, EncodeLike, Copy, Clone, Default, PartialEq)]
 pub struct UserData<AccountId> {
 	// the author means this data was created by this person.
 	// author has the Write access.
