@@ -75,7 +75,7 @@ decl_storage! {
         // the data_id represants where data locate in external storage.
         // In KVDB, it would be a key. In IPFS, it would be a hash.
         // In some other RDBMS, it would be a more complex structure.
-        Data: get(fn get_data) map Vec<u8> => UserData<T::AccountId>;
+        Data get(fn get_data): map Vec<u8> => UserData<T::AccountId>;
     }
 }
 
