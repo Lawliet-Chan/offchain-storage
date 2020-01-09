@@ -8,9 +8,9 @@ use sp_std::{vec::Vec, default::Default};
 // ExternalStorage is for developers to implement specific storage
 // such as ipfs, mysql, mongodb, neo4j and so on.
 pub trait ExternalStorage {
-	fn get(&self, key: Vec<u8>) -> Vec<u8>;
-	fn set(&self, key: Vec<u8>, value: Vec<u8>);
-	fn delete(&self, key: Vec<u8>);
+	fn get(key: Vec<u8>) -> Vec<u8>;
+	fn set(key: Vec<u8>, value: Vec<u8>);
+	fn delete(key: Vec<u8>);
 }
 
 pub trait Trait: frame_system::Trait {
@@ -149,16 +149,15 @@ impl<T: Trait> Module<T> {
 	}
 
 	fn get_external_storage(data_id: Vec<u8>) -> Vec<u8> {
-		<T as Trait>::Storage::get(data_id)
-		//<ExternalStorage>::get(<T as Trait>::Storage,data_id)
+		T::Storage::get(data_id)
 	}
 
 	fn set_external_storage(data_id: Vec<u8>, data: Vec<u8>) {
-		<ExternalStorage>::set(<T as Trait>::Storage,data_id, data)
+		T::Storage::set(data_id, data)
 	}
 
 	fn delete_external_storage(data_id: Vec<u8>) {
-		<ExternalStorage>::delete(<T as Trait>::Storage,data_id)
+		T::Storage::delete(data_id)
 	}
 }
 
@@ -207,20 +206,18 @@ mod tests {
 	}
 
 	// Simulate a external database.
-	pub struct HttpDB{
-		db_url: &'static str,
-	}
+	pub struct HttpDB;
 
 	impl ExternalStorage for HttpDB {
-		fn get(&self, key: Vec<u8>) -> Vec<u8> {
+		fn get(key: Vec<u8>) -> Vec<u8> {
 			unimplemented!()
 		}
 
-		fn set(&self,key: Vec<u8>, value: Vec<u8>) {
+		fn set(key: Vec<u8>, value: Vec<u8>) {
 			unimplemented!()
 		}
 
-		fn delete(&self,key: Vec<u8>) {
+		fn delete(key: Vec<u8>) {
 			unimplemented!()
 		}
 	}
