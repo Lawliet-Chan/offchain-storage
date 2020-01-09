@@ -99,7 +99,7 @@ decl_module! {
                     Err(Error::<T>::PermissionDenied)?
                 }else{
                     let data = Self::get_external_storage(data_id);
-                    Self::deposit_event(RawEvent::GetData(data));
+                    Self::deposit_event(Event::GetData(data));
                     Ok(())
                 }
             }else{
