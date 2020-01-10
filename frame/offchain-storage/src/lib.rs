@@ -256,12 +256,27 @@ mod tests {
 
     type OffchainStorage = Module<Test>;
 
+    // This function basically just builds a genesis storage key/value store according to
+    // our desired mockup.
+    fn new_test_ext() -> sp_io::TestExternalities {
+        frame_system::GenesisConfig::default()
+            .build_storage::<Test>()
+            .unwrap()
+            .into()
+    }
+
     #[test]
     fn do_external_storage() {
-        let key: Vec<u8> = b"key".to_vec();
-        let value: Vec<u8> = b"key".to_vec();
-        assert_ok!(OffchainStorage::write_data(Origin::signed(1), key.clone(), value));
-        assert_ok!(OffchainStorage::read_data(Origin::signed(2), key.clone()));
-        assert_ok!(OffchainStorage::delete_data(Origin::signed(1), key));
+        new_test_ext().execute_with(|| {
+            let key: Vec<u8> = b"key".to_vec();
+            let value: Vec<u8> = b"key".to_vec();
+            assert_ok!(OffchainStorage::write_data(
+                Origin::signed(1),
+                key.clone(),
+                value
+            ));
+            assert_ok!(OffchainStorage::read_data(Origin::signed(2), key.clone()));
+            assert_ok!(OffchainStorage::delete_data(Origin::signed(1), key));
+        });
     }
 }
