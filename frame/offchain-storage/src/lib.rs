@@ -146,9 +146,7 @@ impl<T: Trait> Module<T> {
     fn check_op_access(user: T::AccountId, data: UserData<T::AccountId>, op: Access) -> bool {
         // User must have a higher access level than the data has.
         // Or the user is author itself.
-        access_value(data.access)
-            >= access_value(op)
-            || user == data.author
+        access_value(data.access) >= access_value(op) || user == data.author
     }
 
     fn get_external_storage(data_id: Vec<u8>) -> Vec<u8> {
@@ -168,11 +166,14 @@ impl<T: Trait> Module<T> {
 mod tests {
     use super::*;
 
-	use sp_core::H256;
-	use frame_support::{assert_ok, impl_outer_origin, parameter_types, weights::Weight};
-	use sp_runtime::{
-		traits::{BlakeTwo256, IdentityLookup}, testing::Header, Perbill,
-	};
+    use frame_support::{impl_outer_origin, parameter_types, weights::Weight};
+    use sp_core::H256;
+    use sp_runtime::{
+        testing::Header,
+        traits::{BlakeTwo256, IdentityLookup},
+        Perbill,
+    };
+    use sp_std::str;
 
     impl_outer_origin! {
         pub enum Origin for Test {}
@@ -220,21 +221,36 @@ mod tests {
     impl ExternalStorage for HttpDB {
         fn get(key: Vec<u8>) -> Vec<u8> {
             let req: Request = Request::get("http://localhost:1234");
-            let pending = req.send().unwrap();
+            let pending = req
+                .add_header("key", str::from_utf8(key.as_slice()).unwrap())
+                .send()
+                .unwrap();
             let mut response = pending.wait().unwrap();
             let body = response.body();
             body.collect::<Vec<u8>>()
         }
 
         fn set(key: Vec<u8>, value: Vec<u8>) {
-            let req: Request = Request::post("http://localhost:1234");
-            let pending = req.send().unwrap();
+            let req: Request = Request::get("http://localhost:1234/set");
+            let pending = req
+                .add_header("key", str::from_utf8(key.as_slice()).unwrap())
+                .add_header("value", str::from_utf8(value.as_slice()).unwrap())
+                .send()
+                .unwrap();
             let mut response = pending.wait().unwrap();
+            let body = response.body();
+            assert_eq!(body.error(), &None);
         }
 
         fn delete(key: Vec<u8>) {
-            let req: Request = Request::delete("http://localhost:1234");
-            let pending = req.send().unwrap();
+            let req: Request = Request::get("http://localhost:1234/delete");
+            let pending = req
+                .add_header("key", str::from_utf8(key.as_slice()).unwrap())
+                .send()
+                .unwrap();
+            let mut response = pending.wait().unwrap();
+            let body = response.body();
+            assert_eq!(body.error(), &None);
         }
     }
 
@@ -245,7 +261,10 @@ mod tests {
         let key: Vec<u8> = b"key".to_vec();
         let value: Vec<u8> = b"key".to_vec();
         OffchainStorage::write_data(Origin::signed(1), key, value);
-        assert_eq!(OffchainStorage::read_data(Origin::signed(2), key), value);
+        assert_eq!(
+            OffchainStorage::read_data(Origin::signed(2), key),
+            Ok(value)
+        );
         OffchainStorage::delete_data(Origin::signed(1), key);
     }
 }
