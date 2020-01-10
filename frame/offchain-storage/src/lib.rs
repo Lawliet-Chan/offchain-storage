@@ -219,13 +219,13 @@ mod tests {
         fn get(key: Vec<u8>) -> Vec<u8> {
             let mut f = File::open(str::from_utf8(key.as_slice()).unwrap()).unwrap();
             let ref mut value: Vec<u8> = Vec::new();
-            f.read_to_end(value);
+            f.read_to_end(value).unwrap();
             value.to_vec()
         }
 
         fn set(key: Vec<u8>, value: Vec<u8>) {
             let mut f = File::create(str::from_utf8(key.as_slice()).unwrap()).unwrap();
-            f.write(value.as_slice());
+            f.write(value.as_slice()).unwrap();
         }
 
         fn delete(key: Vec<u8>) {
