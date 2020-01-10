@@ -166,7 +166,7 @@ impl<T: Trait> Module<T> {
 mod tests {
     use super::*;
 
-    use frame_support::{impl_outer_origin, parameter_types, weights::Weight};
+    use frame_support::{assert_ok, impl_outer_origin, parameter_types, weights::Weight};
     use sp_core::H256;
     use sp_runtime::{
         testing::Header,
@@ -260,11 +260,8 @@ mod tests {
     fn do_external_storage() {
         let key: Vec<u8> = b"key".to_vec();
         let value: Vec<u8> = b"key".to_vec();
-        OffchainStorage::write_data(Origin::signed(1), key, value);
-        assert_eq!(
-            OffchainStorage::read_data(Origin::signed(2), key),
-            Ok(value)
-        );
-        OffchainStorage::delete_data(Origin::signed(1), key);
+        assert_ok!(OffchainStorage::write_data(Origin::signed(1), key, value));
+        assert_ok!(OffchainStorage::read_data(Origin::signed(2), key));
+        assert_ok!(OffchainStorage::delete_data(Origin::signed(1), key));
     }
 }
