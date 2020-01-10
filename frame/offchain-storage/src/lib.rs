@@ -206,47 +206,31 @@ mod tests {
     }
     impl Trait for Test {
         type Event = ();
-        type Storage = HttpDB;
+        type Storage = DB;
     }
-
-    use sp_runtime::offchain::http::Request;
-
     // Simulate a external database.
-    pub struct HttpDB;
+    pub struct DB;
 
-    impl ExternalStorage for HttpDB {
+    use std::fs;
+    use std::fs::File;
+    use std::io;
+    use std::io::prelude::*;
+
+    impl ExternalStorage for DB {
         fn get(key: Vec<u8>) -> Vec<u8> {
-            let req: Request = Request::get("http://localhost:1234");
-            let pending = req
-                .add_header("key", str::from_utf8(key.as_slice()).unwrap())
-                .send()
-                .unwrap();
-            let response = pending.wait().unwrap();
-            let body = response.body();
-            body.collect::<Vec<u8>>()
+            let f = File::open(str::from_utf8(key.as_slice())).unwrap();
+            let ref mut value: Vec<u8> = Vec::new();
+            f.read_to_end(value);
+            value
         }
 
         fn set(key: Vec<u8>, value: Vec<u8>) {
-            let req: Request = Request::get("http://localhost:1234/set");
-            let pending = req
-                .add_header("key", str::from_utf8(key.as_slice()).unwrap())
-                .add_header("value", str::from_utf8(value.as_slice()).unwrap())
-                .send()
-                .unwrap();
-            let response = pending.wait().unwrap();
-            let body = response.body();
-            assert_eq!(body.error(), &None);
+            let f = File::create(str::from_utf8(key.as_slice())).unwrap();
+            f.write(value)
         }
 
         fn delete(key: Vec<u8>) {
-            let req: Request = Request::get("http://localhost:1234/delete");
-            let pending = req
-                .add_header("key", str::from_utf8(key.as_slice()).unwrap())
-                .send()
-                .unwrap();
-            let response = pending.wait().unwrap();
-            let body = response.body();
-            assert_eq!(body.error(), &None);
+            fs::remove_file(str::from_utf8(key.as_slice())).unwrap();
         }
     }
 
