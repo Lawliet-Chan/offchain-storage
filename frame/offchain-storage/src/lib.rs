@@ -213,24 +213,23 @@ mod tests {
 
     use std::fs;
     use std::fs::File;
-    use std::io;
     use std::io::prelude::*;
 
     impl ExternalStorage for DB {
         fn get(key: Vec<u8>) -> Vec<u8> {
-            let f = File::open(str::from_utf8(key.as_slice())).unwrap();
+            let f = File::open(str::from_utf8(key.as_slice()).unwrap()).unwrap();
             let ref mut value: Vec<u8> = Vec::new();
             f.read_to_end(value);
-            value
+            value.to_vec()
         }
 
         fn set(key: Vec<u8>, value: Vec<u8>) {
-            let f = File::create(str::from_utf8(key.as_slice())).unwrap();
-            f.write(value)
+            let f = File::create(str::from_utf8(key.as_slice()).unwrap()).unwrap();
+            f.write(value.as_slice());
         }
 
         fn delete(key: Vec<u8>) {
-            fs::remove_file(str::from_utf8(key.as_slice())).unwrap();
+            fs::remove_file(str::from_utf8(key.as_slice()).unwrap()).unwrap();
         }
     }
 
