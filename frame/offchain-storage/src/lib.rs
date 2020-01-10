@@ -144,8 +144,8 @@ decl_module! {
 impl<T: Trait> Module<T> {
     // check user's operation access
     fn check_op_access(user: T::AccountId, data: UserData<T::AccountId>, op: Access) -> bool {
-        /// User must have a higher access level than the data has.
-        /// Or the user is author itself.
+        // User must have a higher access level than the data has.
+        // Or the user is author itself.
         access_value(data.access)
             >= access_value(op)
             || user == data.author
