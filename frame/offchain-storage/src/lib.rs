@@ -168,7 +168,11 @@ impl<T: Trait> Module<T> {
 mod tests {
     use super::*;
 
-    use frame_support::{assert_ok, impl_outer_origin, parameter_types, weights::Weight};
+	use sp_core::H256;
+	use frame_support::{assert_ok, impl_outer_origin, parameter_types, weights::Weight};
+	use sp_runtime::{
+		traits::{BlakeTwo256, IdentityLookup}, testing::Header, Perbill,
+	};
 
     impl_outer_origin! {
         pub enum Origin for Test {}
