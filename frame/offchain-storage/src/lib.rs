@@ -225,7 +225,7 @@ mod tests {
                 .add_header("key", str::from_utf8(key.as_slice()).unwrap())
                 .send()
                 .unwrap();
-            let mut response = pending.wait().unwrap();
+            let response = pending.wait().unwrap();
             let body = response.body();
             body.collect::<Vec<u8>>()
         }
@@ -237,7 +237,7 @@ mod tests {
                 .add_header("value", str::from_utf8(value.as_slice()).unwrap())
                 .send()
                 .unwrap();
-            let mut response = pending.wait().unwrap();
+            let response = pending.wait().unwrap();
             let body = response.body();
             assert_eq!(body.error(), &None);
         }
@@ -248,7 +248,7 @@ mod tests {
                 .add_header("key", str::from_utf8(key.as_slice()).unwrap())
                 .send()
                 .unwrap();
-            let mut response = pending.wait().unwrap();
+            let response = pending.wait().unwrap();
             let body = response.body();
             assert_eq!(body.error(), &None);
         }
@@ -260,8 +260,8 @@ mod tests {
     fn do_external_storage() {
         let key: Vec<u8> = b"key".to_vec();
         let value: Vec<u8> = b"key".to_vec();
-        assert_ok!(OffchainStorage::write_data(Origin::signed(1), key, value));
-        assert_ok!(OffchainStorage::read_data(Origin::signed(2), key));
+        assert_ok!(OffchainStorage::write_data(Origin::signed(1), key.clone(), value));
+        assert_ok!(OffchainStorage::read_data(Origin::signed(2), key.clone()));
         assert_ok!(OffchainStorage::delete_data(Origin::signed(1), key));
     }
 }
