@@ -30,7 +30,7 @@ pub struct UserData<AccountId> {
 /// Access is that the access of UserData.
 #[derive(Encode, Decode, Clone, PartialEq)]
 pub enum Access {
-    // Avoid means that no one can read or write this data unless author.
+    // Avoid means that no one can read or write this data except author.
     Avoid,
     // Read means that this data just can be read.
     Read,
