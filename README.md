@@ -37,7 +37,7 @@ pub trait ExternalStorage {
        fn delete(key: Vec<u8>);
    }
    ```
-   It defines a key-value storage api because every storage form can be compatible with key-value such as table(MySQL), filesystem(IPFS), Neo4j(graph).  
+   It defines a key-value storage api because every storage form can be compatible with key-value such as table(MySQL), filesystem(IPFS), graph(Neo4j).  
    Developers can implement this trait for any external storage service they need, for example as follows:  
 ```
 	use std::fs;
